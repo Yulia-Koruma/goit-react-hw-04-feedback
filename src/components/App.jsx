@@ -1,48 +1,25 @@
-import { Component } from "react";
+import { useState } from "react";
 import { Statistics } from "./Statistics/Statistics";
 import { FeedbackOptions } from "./FeedbackOptions/FeedbackOptions";
 import { Section } from "./Section/Section";
 import { GlobalStyle } from "./GlobalStyle";
 import { Notification } from "./Notification/Notification";
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+export const App = () => {
+  const [data, setData] = useState({ good: 0, neutral: 0, bad: 0 });
+  const { good, neutral, bad } = data;
 
-  onLeaveFeedback = (option) => {
-    this.setState((prevState) => {
-      return {
-        [option]: prevState[option] + 1,
-      };
-    });
+  const onLeaveFeedback = option => {
+    setData(prevState =>({...prevState, [option]: prevState[option] + 1}));
   }
-  
-  countTotalFeedback = () => {
-    const { good, neutral, bad } = this.state;
-    return good + neutral + bad;
 
-  };
-    
-  countPositiveFeedbackPercentage = () => {
-    const { good } = this.state;
-    const total = this.countTotalFeedback();
-    const percentage = good ? (100 * good / total) : 0;
-    return Math.round(percentage);
-    }
-  
+  const total = good + neutral + bad;
+  const positivePercentage = good ? Math.round(100 * good / total) : 0;
 
-    render() {
-      const { good, neutral, bad } = this.state;
-      const total = this.countTotalFeedback();
-      const positivePercentage = this.countPositiveFeedbackPercentage();
-  
-    return (
+  return (
       <>
         <Section title="Please leave feedback">
-          <FeedbackOptions options={Object.keys(this.state)} onLeaveFeedback={this.onLeaveFeedback}/>
+          <FeedbackOptions options={Object.keys(data)} onLeaveFeedback={onLeaveFeedback} />
         </Section>
 
         <Section title="Statistics">
@@ -52,5 +29,5 @@ export class App extends Component {
         <GlobalStyle />
       </>
     )
+  
   }
-}
